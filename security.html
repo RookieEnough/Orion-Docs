@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Security | Orion Store</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+    <header>
+        <div class="nav-container">
+            <a href="index.html" class="logo"><i class="fa-solid fa-layer-group"></i> Docs</a>
+            <div class="hamburger" id="hamburger"><i class="fas fa-bars"></i></div>
+            <ul class="nav-links" id="nav-links">
+                <li><a href="architecture.html"><i class="fas fa-microchip"></i> Architecture</a></li>
+                <li><a href="trust_lifecycle.html"><i class="fas fa-check-double"></i> Trust Lifecycle</a></li>
+                <li><a href="community_engine.html"><i class="fas fa-users"></i> Community</a></li>
+                <li><a href="security.html" class="active"><i class="fas fa-shield-halved"></i> Security</a></li>
+                <li><a href="contributor_guide.html"><i class="fas fa-code-branch"></i> Contributing</a></li>
+                <li>
+                    <a href="https://github.com/RookieEnough/Orion-Store" target="_blank"
+                        style="padding: 0; background: none;">
+                        <img src="https://img.shields.io/github/stars/RookieEnough/Orion-Store?style=social"
+                            alt="GitHub Stars">
+                    </a>
+                </li>
+            </ul>
+        </div>
+    </header>
+
+    <main>
+        <h1 class="page-title">Breaking the Sandbox</h1>
+        <p class="subtitle">Web-to-Native Bridge & Security</p>
+
+        <div class="alert alert-caution">
+            <strong><i class="fas fa-radiation"></i> Engineering Hazard:</strong> Orion is built with Web technologies.
+            Standard web apps cannot install APKs or revoke permissions.
+            <strong>We cheated.</strong>
+        </div>
+
+        <section>
+            <h2>1. The Worker Core (Thread Offloading)</h2>
+            <p><strong>The Bottleneck:</strong> Modern web applications are single-threaded by default. Parsing strict
+                JSON schemas for 10,000 apps and verifying cryptographic signatures on the main UI thread would be
+                disastrous. It would cause "jank"—visible stutters—and make the app feel like a laggy webpage rather
+                than a native tool.</p>
+            <p><strong>The Solution:</strong> Orion spawns a dedicated <strong>Web Worker</strong> context at launch.
+                This acts as a secondary thread that lives in parallel to the UI. We offload all heavy
+                computation—hashing, parsing, and searching—to this worker.</p>
+            <p>This architecture allows the UI to render animations at a locked <strong>120Hz</strong> while the "Brain"
+                crunchs megabytes of data in the background. The user perceives zero latency, even during heavy
+                workloads.</p>
+        </section>
+
+        <section>
+            <h2>2. Shizuku Integration (The System Guardian)</h2>
+            <p>Orion implements a specialized Bridge to <strong>Shizuku</strong>, an advanced Android tool that allows
+                normal user-installed apps to access system-level APIs via the <code>adb</code> process.</p>
+            <p>Typically, only "Rooted" devices can perform actions like silent installation. Shizuku allows us to
+                bypass this requirement by proxying commands through the Android Debug Bridge. This gives Orion
+                "Superuser-lite" powers without compromising the device's security model:</p>
+
+            <ul>
+                <li><strong>Silent Install:</strong> We can stream the APK byte-data directly to the Package Installer
+                    session, bypassing the "Confirm?" prompt for seamless updates.</li>
+                <li><strong>Permission Revoke:</strong> Orion can audit installed apps and forcefully revoke sensitive
+                    permissions (like Location or Camera) if an app is abusing them.</li>
+                <li><strong>System App Debloater:</strong> We can <code>pm disable-user</code> carrier bloatware,
+                    effectively hiding it from the system without needing write-access to the <code>/system</code>
+                    partition.</li>
+            </ul>
+
+            <div class="alert alert-warning">
+                <strong><i class="fas fa-shield-alt"></i> Security Model:</strong>
+                Orion requests access to specific <code>adb</code> shell commands. Unlike Root, which grants absolute
+                power, Shizuku relies on the Android permissions system. If you restart your device, Shizuku access is
+                revoked until you re-authorize it, ensuring no permanent backdoor exists.
+            </div>
+        </section>
+
+        <section>
+            <h2>3. Orion Sentinel (Distributed Intelligence)</h2>
+            <p>Traditional antiviruses work by sending your file list to a cloud server for scanning. <strong>We
+                    consider this a privacy breach.</strong> Orion Sentinel is a "Local-First" threat scanner.</p>
+            <p>Instead of sending your data to us, we send the threat database to you. Orion downloads a highly
+                compressed "<strong>Bloom Filter</strong>" of known malicious hashes and tracker signatures. The app
+                then scans your installed packages entirely <strong>On-Device</strong>.</p>
+            <p>Orion can inform you if an installed calculator app contains 50 hidden ad-trackers or a known malware
+                signature, <strong>without Orion's servers ever knowing you installed it.</strong> Privacy is not a
+                setting; it's the architecture.</p>
+        </section>
+
+    </main>
+
+    <footer>
+        <div class="footer-content">
+            <div class="footer-top">
+                <div class="footer-brand">
+                    <i class="fa-solid fa-layer-group"></i> Orion Docs
+                </div>
+                <div class="social-links">
+                    <a href="https://github.com/RookieEnough" class="social-btn gh" target="_blank">
+                        <i class="fab fa-github"></i> Profile
+                    </a>
+                    <a href="https://x.com/_Rookie_Z" class="social-btn x" target="_blank">
+                        <i class="fa-brands fa-x-twitter"></i> X
+                    </a>
+                    <a href="https://www.reddit.com/r/OrionStore" class="social-btn reddit" target="_blank">
+                        <i class="fa-brands fa-reddit"></i> Reddit
+                    </a>
+                    <a href="https://www.youtube.com/@TECHBOOKTechnical" class="social-btn youtube" target="_blank">
+                        <i class="fa-brands fa-youtube"></i> YouTube
+                    </a>
+                    <a href="https://discord.com/invite/CrM6y4ujnq" class="social-btn discord" target="_blank">
+                        <i class="fa-brands fa-discord"></i> Discord
+                    </a>
+                    <a href="mailto:sarthaksinha5088@gmail.com" class="social-btn email">
+                        <i class="fas fa-envelope"></i> Contact
+                    </a>
+                    <a href="https://buymeacoffee.com/rookiez" class="social-btn coffee" target="_blank">
+                        <i class="fas fa-coffee"></i> Buy me a coffee
+                    </a>
+                </div>
+            </div>
+
+            <div class="footer-divider"></div>
+
+            <div class="footer-links-row">
+                <a href="index.html" class="footer-link">Home</a>
+                <a href="architecture.html" class="footer-link">Architecture</a>
+                <a href="contributor_guide.html" class="footer-link">Contributing</a>
+                <a href="security.html" class="footer-link">Security</a>
+                <a href="https://github.com/RookieEnough/Orion-Store/issues" target="_blank" class="footer-link">Report
+                    Issue</a>
+            </div>
+
+            <p class="copyright">
+                &copy; 2026 Orion Store Project. Released under the MIT License.<br>
+                Made with <span class="heart">💜</span> by RookieZ.
+            </p>
+        </div>
+    </footer>
+
+    <script>
+        document.getElementById('hamburger').addEventListener('click', () => {
+            document.getElementById('nav-links').classList.toggle('active');
+        });
+    </script>
+</body>
+
+</html>

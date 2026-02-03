@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Architecture | Orion Store</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="style.css">
+    <script type="module">
+        import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.esm.min.mjs';
+        mermaid.initialize({ startOnLoad: true, theme: 'dark' });
+    </script>
+</head>
+
+<body>
+
+    <header>
+        <div class="nav-container">
+            <a href="index.html" class="logo"><i class="fa-solid fa-layer-group"></i> Docs</a>
+            <div class="hamburger" id="hamburger"><i class="fas fa-bars"></i></div>
+            <ul class="nav-links" id="nav-links">
+                <li><a href="architecture.html" class="active"><i class="fas fa-microchip"></i> Architecture</a></li>
+                <li><a href="trust_lifecycle.html"><i class="fas fa-check-double"></i> Trust Lifecycle</a></li>
+                <li><a href="community_engine.html"><i class="fas fa-users"></i> Community</a></li>
+                <li><a href="security.html"><i class="fas fa-shield-halved"></i> Security</a></li>
+                <li><a href="contributor_guide.html"><i class="fas fa-code-branch"></i> Contributing</a></li>
+                <li>
+                    <a href="https://github.com/RookieEnough/Orion-Store" target="_blank"
+                        style="padding: 0; background: none;">
+                        <img src="https://img.shields.io/github/stars/RookieEnough/Orion-Store?style=social"
+                            alt="GitHub Stars">
+                    </a>
+                </li>
+            </ul>
+        </div>
+    </header>
+
+    <main>
+        <h1 class="page-title">The Engineering "Magic"</h1>
+        <p class="subtitle">Architecture & Workarounds for a $0 Budget</p>
+
+        <div class="alert alert-note">
+            <strong><i class="fas fa-info-circle"></i> Note:</strong> Orion's architecture is built on a single
+            constraint: <strong>$0 Budget.</strong>
+            This constraint forced us to invent novel ways to use existing infrastructure (GitHub) as a high-performance
+            CDN and Database.
+        </div>
+
+        <section>
+            <h2>A. The "Ghost Branch" Protocol</h2>
+            <h3>The Bloat Problem</h3>
+            <p>In a traditional Git workflow, "History" is a feature. However, for a high-frequency database, history is
+                technical debt. If Orion were to commit updates for 10,000 apps every 6 hours using standard Git
+                practices, the <code>.git</code> folder—which users must verify—would grow exponentially. Within months,
+                users would be downloading Gigabytes of useless commit history just to get the current state of the
+                store.</p>
+
+            <h3>The Orphan Solution</h3>
+            <p>We solved this by treating the <code>data</code> branch not as a version control log, but as an ephemeral
+                <strong>Snapshot State</strong>. The core innovation is the use of "Orphan Branches"—branches that share
+                no commit history with the main tree.
+            </p>
+            <p>Every 6 hours, our automation runner checks out a completely new, empty orphan branch. It constructs the
+                entire database state from scratch in memory, writes it to the file system, and commits it as the
+                <em>first and only</em> commit. It then force-pushes this branch to <code>origin/data</code>. To the Git
+                object model, the "history" never happened. The repository size remains constant (~500KB) regardless of
+                how many years the store runs.
+            </p>
+
+            <div class="mermaid-wrapper">
+                <pre class="mermaid">
+graph TD
+    A[Start: 6 Hour Timer] --> B[CI Runner Starts]
+    B --> C{Orphan Branch?}
+    C -->|Yes| D[Checkout --orphan temp]
+    D --> E[Git Add -A]
+    E --> F[Git Commit 'Snapshot']
+    F --> G[Delete Old 'data' Branch]
+    G --> H[Rename 'temp' to 'data']
+    H --> I[Force Push to Origin]
+    I --> J[End: Repo Size Reset]
+                </pre>
+            </div>
+        </section>
+
+        <section>
+            <h2>B. The "Menu vs. Chef" Protocol</h2>
+            <h3>The "Thundering Herd" API Limit</h3>
+            <p>GitHub's REST API is generous for developers but draconian for applications, allowing only 60
+                unauthenticated requests per hour IP address. A traditional app architecture where the client queries an
+                API server (The Chef) for data would be instantly rate-limited if just 100 users opened the app
+                simultaneously.</p>
+
+            <h3>Static CDN Delivery</h3>
+            <p>Orion inverts this model. We never let the Service Client speak to the "Chef" (The API). Instead, our
+                bots pre-compute the entire state of the application into static JSON headers—The "Menu".</p>
+            <p>This <code>mirror.json</code> is deployed to GitHub Pages, which is backed by a global Content Delivery
+                Network (Fastly). When a user opens Orion, they are essentially downloading a static text file. This
+                operation is idempotent, cacheable by ISPs, and completely invisible to GitHub's API rate limiters. We
+                effectively "launder" dynamic API data into static assets.</p>
+
+            <div class="alert alert-note">
+                <strong><i class="fas fa-calculator"></i> The Scale Math:</strong>
+                <ul>
+                    <li><strong>Traditional REST:</strong> 10,000 users * 1 request = <strong>10,000 API calls</strong>
+                        (Instant Ban).</li>
+                    <li><strong>Orion Protocol:</strong> 10,000 users * 1 fetch = <strong>1 HTTP GET</strong> (Cached).
+                        Zero API cost.</li>
+                </ul>
+            </div>
+        </section>
+
+        <section>
+            <h2>C. Hierarchical Sharding</h2>
+            <p><strong>The Inode Limit:</strong> File systems like ext4 or NTFS begin to suffer performance degradation
+                when a single directory contains more than 10,000 files. Listing such a directory becomes an O(N)
+                operation, slowing down both the build bots and the user's device.</p>
+            <p>To support a theoretical limit of millions of apps, we implemented a deterministic sharding algorithm
+                based on the package name. An app ID like <code>com.spotify.music</code> is tokenized and nested:</p>
+            <pre><code>data/mirrors/s/p/spotify.json</code></pre>
+            <p>This structure guarantees that no single folder ever exceeds a few hundred items, ensuring <strong>O(1)
+                    Lookup Times</strong> even if the store grows to the size of the Google Play Store.</p>
+        </section>
+
+    </main>
+
+    <footer>
+        <div class="footer-content">
+            <div class="footer-top">
+                <div class="footer-brand">
+                    <i class="fa-solid fa-layer-group"></i> Orion Docs
+                </div>
+                <div class="social-links">
+                    <a href="https://github.com/RookieEnough" class="social-btn gh" target="_blank">
+                        <i class="fab fa-github"></i> Profile
+                    </a>
+                    <a href="https://x.com/_Rookie_Z" class="social-btn x" target="_blank">
+                        <i class="fa-brands fa-x-twitter"></i> X
+                    </a>
+                    <a href="https://www.reddit.com/r/OrionStore" class="social-btn reddit" target="_blank">
+                        <i class="fa-brands fa-reddit"></i> Reddit
+                    </a>
+                    <a href="https://www.youtube.com/@TECHBOOKTechnical" class="social-btn youtube" target="_blank">
+                        <i class="fa-brands fa-youtube"></i> YouTube
+                    </a>
+                    <a href="https://discord.com/invite/CrM6y4ujnq" class="social-btn discord" target="_blank">
+                        <i class="fa-brands fa-discord"></i> Discord
+                    </a>
+                    <a href="mailto:sarthaksinha5088@gmail.com" class="social-btn email">
+                        <i class="fas fa-envelope"></i> Contact
+                    </a>
+                    <a href="https://buymeacoffee.com/rookiez" class="social-btn coffee" target="_blank">
+                        <i class="fas fa-coffee"></i> Buy me a coffee
+                    </a>
+                </div>
+            </div>
+
+            <div class="footer-divider"></div>
+
+            <div class="footer-links-row">
+                <a href="index.html" class="footer-link">Home</a>
+                <a href="architecture.html" class="footer-link">Architecture</a>
+                <a href="contributor_guide.html" class="footer-link">Contributing</a>
+                <a href="security.html" class="footer-link">Security</a>
+                <a href="https://github.com/RookieEnough/Orion-Store/issues" target="_blank" class="footer-link">Report
+                    Issue</a>
+            </div>
+
+            <p class="copyright">
+                &copy; 2026 Orion Store Project. Released under the MIT License.<br>
+                Made with <span class="heart">💜</span> by RookieZ.
+            </p>
+        </div>
+    </footer>
+
+    <script>
+        document.getElementById('hamburger').addEventListener('click', () => {
+            document.getElementById('nav-links').classList.toggle('active');
+        });
+    </script>
+</body>
+
+</html>

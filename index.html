@@ -1,0 +1,318 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Orion Store | The Immutable Store</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+    <header>
+        <div class="nav-container">
+            <a href="index.html" class="logo">
+                <img src="app_icon.png" alt="Orion Logo" style="height: 40px; border-radius: 8px;">
+                Orion Docs
+            </a>
+            <div class="hamburger" id="hamburger">
+                <i class="fas fa-bars"></i>
+            </div>
+            <ul class="nav-links" id="nav-links">
+                <li><a href="architecture.html"><i class="fas fa-microchip"></i> Architecture</a></li>
+                <li><a href="trust_lifecycle.html"><i class="fas fa-check-double"></i> Trust Lifecycle</a></li>
+                <li><a href="community_engine.html"><i class="fas fa-users"></i> Community</a></li>
+                <li><a href="security.html"><i class="fas fa-shield-halved"></i> Security</a></li>
+                <li><a href="contributor_guide.html"><i class="fas fa-code-branch"></i> Contributing</a></li>
+                <li>
+                    <a href="https://github.com/RookieEnough/Orion-Store" target="_blank"
+                        style="padding: 0; background: none;">
+                        <img src="https://img.shields.io/github/stars/RookieEnough/Orion-Store?style=social"
+                            alt="GitHub Stars">
+                    </a>
+                </li>
+            </ul>
+        </div>
+    </header>
+
+    <div class="hero">
+        <h1>The Immutable Store</h1>
+        <p class="tagline">Zero Database. Zero Tracking. Zero Cost.</p>
+
+        <div class="tech-pill-container">
+            <span class="tech-pill">Nuclear Performance</span>
+            <span class="tech-pill">GitHub Objects</span>
+            <span class="tech-pill">O(1) Reads</span>
+        </div>
+
+        <a href="#philosophy" class="cta-button">Read the Manifesto</a>
+    </div>
+
+    <main>
+        <section id="philosophy">
+            <h2>The "Repo-as-a-Backend" Philosophy</h2>
+            <p>Orion Store is an engineering proof-of-concept that challenges the modern stack. We asked a simple
+                question: <em>"Can we build a globally scalable app store without a single server?"</em></p>
+            <p>The answer is <strong>Yes</strong>. But it required breaking every rule in the DevOps handbook.</p>
+
+            <blockquote>
+                "Orion has no database. No SQL. No Firebase. No AWS. It runs entirely on a distributed file system
+                hosted on GitHub."
+            </blockquote>
+
+            <p>By leveraging Git's content-addressable file system, Orion achieves <span
+                    style="color: var(--accent-primary); font-weight: bold;">O(1) read speeds</span> and <span
+                    style="color: var(--accent-secondary); font-weight: bold;">infinite scalability</span>. The store
+                *is* the code.</p>
+        </section>
+
+        <section id="core-mechanics">
+            <h2>Engineering by Subtraction</h2>
+            <div class="card-grid">
+                <div class="card">
+                    <div class="icon-box"><i class="fas fa-database"></i></div>
+                    <h3>No Database</h3>
+                    <p>We use the <strong>Ghost Branch Protocol</strong> to turn a git repository into a
+                        high-performance key-value store that cleans itself.</p>
+                </div>
+                <div class="card">
+                    <div class="icon-box"><i class="fas fa-server"></i></div>
+                    <h3>No API Servers</h3>
+                    <p>We bypass rate limits using the <strong>Menu vs. Chef</strong> protocol. Pre-computed static
+                        headers serve millions of clients instantly.</p>
+                </div>
+                <div class="card">
+                    <div class="icon-box"><i class="fas fa-microchip"></i></div>
+                    <h3>No Backend Logic</h3>
+                    <p>We use <strong>GitHub Issues</strong> as a message queue to power dynamic features like
+                        Leaderboards and Reviews.</p>
+                </div>
+                <div class="card">
+                    <div class="icon-box"><i class="fas fa-user-secret"></i></div>
+                    <h3>No Trackers</h3>
+                    <p>We believe in privacy by design. No analytics, no telemetry, and local-only threat scanning.</p>
+                </div>
+            </div>
+        </section>
+
+        <section id="deep-dives">
+            <h2>The Architecture</h2>
+            <p>Orion isn't just an app; it's a collection of architectural workarounds that became features.</p>
+
+            <ul class="link-list">
+                <li>
+                    <a href="architecture.html">
+                        <strong><i class="fas fa-code-branch"></i> The Engineering "Magic"</strong>
+                        <span>Ghost Branch, Sharding, Binary Manifests</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="trust_lifecycle.html">
+                        <strong><i class="fas fa-check-circle"></i> Trust Lifecycle</strong>
+                        <span>From Submission to Installation</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="community_engine.html">
+                        <strong><i class="fas fa-users"></i> The Serverless Community</strong>
+                        <span>Leaderboard via GitHub Issues</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="security.html">
+                        <strong><i class="fas fa-shield-alt"></i> Breaking the Sandbox</strong>
+                        <span>Web-to-Native bridging via Shizuku</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="contributor_guide.html">
+                        <strong><i class="fas fa-hand-holding-heart"></i> The Art of Submission</strong>
+                        <span>Contributor's Guide & Tradecraft</span>
+                    </a>
+                </li>
+            </ul>
+        </section>
+    </main>
+
+    <footer>
+        <div class="footer-content">
+            <div class="footer-top">
+                <div class="footer-brand">
+                    <i class="fa-solid fa-layer-group"></i> Orion Docs
+                </div>
+                <div class="social-links">
+                    <a href="https://github.com/RookieEnough" class="social-btn gh" target="_blank">
+                        <i class="fab fa-github"></i> Profile
+                    </a>
+                    <a href="https://x.com/_Rookie_Z" class="social-btn x" target="_blank">
+                        <i class="fa-brands fa-x-twitter"></i> X
+                    </a>
+                    <a href="https://www.reddit.com/r/OrionStore" class="social-btn reddit" target="_blank">
+                        <i class="fa-brands fa-reddit"></i> Reddit
+                    </a>
+                    <a href="https://www.youtube.com/@TECHBOOKTechnical" class="social-btn youtube" target="_blank">
+                        <i class="fa-brands fa-youtube"></i> YouTube
+                    </a>
+                    <a href="https://discord.com/invite/CrM6y4ujnq" class="social-btn discord" target="_blank">
+                        <i class="fa-brands fa-discord"></i> Discord
+                    </a>
+                    <a href="mailto:sarthaksinha5088@gmail.com" class="social-btn email">
+                        <i class="fas fa-envelope"></i> Contact
+                    </a>
+                    <a href="https://buymeacoffee.com/rookiez" class="social-btn coffee" target="_blank">
+                        <i class="fas fa-coffee"></i> Buy me a coffee
+                    </a>
+                </div>
+            </div>
+
+            <div class="footer-divider"></div>
+
+            <div class="footer-links-row">
+                <a href="index.html" class="footer-link">Home</a>
+                <a href="architecture.html" class="footer-link">Architecture</a>
+                <a href="contributor_guide.html" class="footer-link">Contributing</a>
+                <a href="security.html" class="footer-link">Security</a>
+                <a href="https://github.com/RookieEnough/Orion-Store/issues" target="_blank" class="footer-link">Report
+                    Issue</a>
+            </div>
+
+            <p class="copyright">
+                &copy; 2026 Orion Store Project. Released under the MIT License.<br>
+                Made with <span class="heart">💜</span> by RookieZ.
+            </p>
+        </div>
+    </footer>
+
+    <canvas id="constellation-canvas"></canvas>
+
+    <script>
+        // Hamburger Menu Toggle
+        const hamburger = document.getElementById('hamburger');
+        const navLinks = document.getElementById('nav-links');
+
+        hamburger.addEventListener('click', () => {
+            navLinks.classList.toggle('active');
+            hamburger.innerHTML = navLinks.classList.contains('active')
+                ? '<i class="fas fa-times"></i>'
+                : '<i class="fas fa-bars"></i>';
+        });
+
+        // Intersection Observer for scroll animations
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('visible');
+                }
+            });
+        }, { threshold: 0.1 });
+
+        document.querySelectorAll('section').forEach(section => {
+            observer.observe(section);
+        });
+
+        // --- ORION CONSTELLATION BACKGROUND ---
+        const canvas = document.getElementById('constellation-canvas');
+        const ctx = canvas.getContext('2d');
+        let width, height;
+        let stars = [];
+        const numStars = 60;
+        const connectionDistance = 150;
+        const mouseDistance = 200;
+
+        let mouse = { x: null, y: null };
+
+        window.addEventListener('mousemove', (e) => {
+            mouse.x = e.clientX;
+            mouse.y = e.clientY;
+        });
+
+        window.addEventListener('resize', resize);
+
+        function resize() {
+            width = canvas.width = window.innerWidth;
+            height = canvas.height = window.innerHeight;
+            initStars();
+        }
+
+        class Star {
+            constructor() {
+                this.x = Math.random() * width;
+                this.y = Math.random() * height;
+                this.vx = (Math.random() - 0.5) * 0.5;
+                this.vy = (Math.random() - 0.5) * 0.5;
+                this.size = Math.random() * 2 + 1;
+                this.color = Math.random() > 0.8 ? '#d2a8ff' : '#79c0ff'; // Secondary or Primary
+            }
+
+            update() {
+                this.x += this.vx;
+                this.y += this.vy;
+
+                if (this.x < 0 || this.x > width) this.vx *= -1;
+                if (this.y < 0 || this.y > height) this.vy *= -1;
+
+                // Mouse Interaction
+                let dx = mouse.x - this.x;
+                let dy = mouse.y - this.y;
+                let distance = Math.sqrt(dx * dx + dy * dy);
+
+                if (distance < mouseDistance) {
+                    const forceDirectionX = dx / distance;
+                    const forceDirectionY = dy / distance;
+                    const force = (mouseDistance - distance) / mouseDistance;
+                    const directionX = forceDirectionX * force * this.size;
+                    const directionY = forceDirectionY * force * this.size;
+
+                    this.x -= directionX * 0.05;
+                    this.y -= directionY * 0.05;
+                }
+            }
+
+            draw() {
+                ctx.beginPath();
+                ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+                ctx.fillStyle = this.color;
+                ctx.fill();
+            }
+        }
+
+        function initStars() {
+            stars = [];
+            for (let i = 0; i < numStars; i++) {
+                stars.push(new Star());
+            }
+        }
+
+        function animate() {
+            ctx.clearRect(0, 0, width, height);
+
+            for (let i = 0; i < stars.length; i++) {
+                stars[i].update();
+                stars[i].draw();
+
+                for (let j = i; j < stars.length; j++) {
+                    let dx = stars[i].x - stars[j].x;
+                    let dy = stars[i].y - stars[j].y;
+                    let distance = Math.sqrt(dx * dx + dy * dy);
+
+                    if (distance < connectionDistance) {
+                        ctx.beginPath();
+                        ctx.strokeStyle = `rgba(121, 192, 255, ${1 - distance / connectionDistance})`;
+                        ctx.lineWidth = 1;
+                        ctx.moveTo(stars[i].x, stars[i].y);
+                        ctx.lineTo(stars[j].x, stars[j].y);
+                        ctx.stroke();
+                    }
+                }
+            }
+            requestAnimationFrame(animate);
+        }
+
+        resize();
+        animate();
+    </script>
+</body>
+
+</html>
