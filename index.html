@@ -217,8 +217,8 @@
         const ctx = canvas.getContext('2d');
         let width, height;
         let stars = [];
-        const numStars = 60;
-        const connectionDistance = 150;
+        let numStars = 60;
+        let connectionDistance = 150;
         const mouseDistance = 200;
 
         let mouse = { x: null, y: null };
@@ -233,6 +233,16 @@
         function resize() {
             width = canvas.width = window.innerWidth;
             height = canvas.height = window.innerHeight;
+
+            // Responsive Optimization
+            if (width < 768) {
+                numStars = 25; // Much cleaner on mobile
+                connectionDistance = 100; // Shorter connections
+            } else {
+                numStars = 60; // Original PC density
+                connectionDistance = 150;
+            }
+
             initStars();
         }
 
